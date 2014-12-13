@@ -4,6 +4,7 @@
 #include <list>
 
 #include "AppliAnalog.h"
+#include "URLData.h"
 
 AppliAnalog::AppliAnalog(int argc, char* argv[])
 {
@@ -130,6 +131,16 @@ int AppliAnalog::Execute()
     	std::cout<< "Option g" << std::endl;
     }
 
+    URLData* data = new URLData(hasOption('g'));
+
+    data->AddLine("google.fr");
+    data->AddLine("google.fr");
+    data->AddLine("google.fr");
+    data->AddLine("yahoo.fr");
+
+    data->Displays();
+
+    delete data;
 
     return 0;
 
