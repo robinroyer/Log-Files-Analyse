@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <string>
+#include <list>
 
 #include "URLStats.h"
 
@@ -32,8 +33,8 @@ class URLData
 
 	private:
 
-		//std::unordered_map<std::string,int> dataMapR;
 		std::unordered_map<std::string, URLStats*> dataMap;
+		std:list 
 		bool optionG;
 
 };
