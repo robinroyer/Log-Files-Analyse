@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <string>
 
-//#include <URLStats.h>
+#include "URLStats.h"
 
 class URLData
 
@@ -32,10 +32,8 @@ class URLData
 
 	private:
 
-		//std::unordered_map <std:string, URLStats>  dataMapG; //dataMap optimized for -g option
-		//std::unordered_map<std:string, int>  dataMapR; //regular dataMap
-		std::unordered_map<std::string,int> dataMapR;
-
+		//std::unordered_map<std::string,int> dataMapR;
+		std::unordered_map<std::string, URLStats*> dataMap;
 		bool optionG;
 
 };

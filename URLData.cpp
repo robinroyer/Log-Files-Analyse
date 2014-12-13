@@ -1,6 +1,6 @@
 //includes
-
 #include "URLData.h"
+#include "URLStats.h"
 #include <string>
 #include <iostream>
 
@@ -11,15 +11,6 @@ URLData::URLData(bool isOptionG)
 	#endif
 
 	optionG=isOptionG;
-
-	if(optionG)
-	{
-		#define MAPDATA dataMapG
-	}
-	else
-	{
-		#define MAPDATA dataMapR
-	}
 }
 
 URLData::~URLData()
@@ -27,6 +18,10 @@ URLData::~URLData()
 	#ifdef DEBUG
     std::cout << "URLData -1" << std::endl;
 	#endif
+
+    //delete all the URLStats
+    for ( auto it = dataMap.begin(); it != dataMap.end(); ++it )
+    	delete it->second;
 }
 
 
@@ -37,11 +32,11 @@ int URLData::AddAll(std::string logFile)
 
 int URLData::AddLine(std::string line)
 {
-	if(MAPDATA.find(line) == dataMapR.end())
+	if(dataMap.find(line) == dataMap.end())
 	{
-		dataMapR[line] = 0;
+		dataMap[line] = new URLStats();
 	}
-	dataMapR[line]++;
+	dataMap[line]->AddHit();
 
 	return 0;
 }
@@ -49,7 +44,7 @@ int URLData::AddLine(std::string line)
 void URLData::Displays()
 {
 	std::cout << "mymap contains:" << std::endl;
- 	for (auto& x: dataMapR)
-    	std::cout << x.first << ": " << x.second << std::endl;
- 	std::cout << std::endl;
+	for ( auto it = dataMap.begin(); it != dataMap.end(); ++it )
+		std::cout << " " << it->first << ":" << (it->second)->GetHits() << std::endl;
+	std::cout << std::endl;	
 }

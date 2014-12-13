@@ -4,18 +4,30 @@
 #include <unordered_map>
 #include <string>
 
-
 class URLStats
 
 
 {
 	public:
+		URLStats();
+		/**
+		 * Creates a URLStats
+		 */
+
+		 ~URLStats();
+		/**
+		 * Destroys the URLStats
+		 */
+
+		int AddHit();
+
+		int GetHits();
 
 	private:
 
-		std::unordered_map <std:string, int>  StatsMap;
+		std::unordered_map<std::string,int> statsMap;
 		int hits;
 
 };
 
-#endif // URLStats_h
+#endif // URLData_h
