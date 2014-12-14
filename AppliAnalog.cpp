@@ -142,6 +142,7 @@ int AppliAnalog::Execute()
 
 
     data->Displays();
+    data->TopTen();
 
     Graph* graph = new Graph("coucou.dot");
 

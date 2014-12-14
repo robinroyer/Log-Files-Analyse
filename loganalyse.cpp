@@ -72,9 +72,9 @@ void loganalyse::read(bool affImage, int hour)
     {        
         while(getline(fichier, contenu))
         {
-             cout << contenu<<endl<<endl;// trace pour verifier que les logs sont bien coupes
-             
-
+            
+            cout << contenu<<endl<<endl;// trace pour verifier que les logs sont bien coupes
+            
             // -----------------separation des logs et rangement dans la structure-------------
              //emettor's IP
             data.ipEmettor=contenu.substr(0,contenu.find_first_of('[',0));

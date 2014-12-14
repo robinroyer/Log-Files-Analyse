@@ -30,6 +30,8 @@ class URLData
 
 		 void Displays();
 
+		 int TopTen();
+
 		 std::string getLinks();
 
 

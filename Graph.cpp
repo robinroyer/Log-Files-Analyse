@@ -1,3 +1,6 @@
+#include <iostream>
+#include <fstream>
+
 #include "Graph.h"
 #include "URLData.h"
 
@@ -19,6 +22,19 @@ Graph::~Graph()
 
 int Graph::GenerateDot(URLData* data)
 {
+	//generate the text of the dot file
 	dotText=data->getLinks();
+
+	#ifdef DEBUG
+	std::cout << dotText<< std::endl;
+	#endif
+
+	//creates the file
+	std::filebuf fb;
+	fb.open (fileName,std::ios::out);
+	std::ostream os(&fb);
+	os << dotText;
+	fb.close();
+
 	return 0;
 }

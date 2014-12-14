@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <list>
 	
 URLData::URLData(bool isOptionG)
 {
@@ -51,27 +52,39 @@ void URLData::Displays()
 	std::cout << std::endl;	
 }
 
+int URLData::TopTen()
+{
+	for ( auto it = dataMap.begin(); it != dataMap.end(); ++it )
+	{
+		//std::cout << " " << it->first << ":" << (it->second)->GetHits() << std::endl;
+		//créer structure 
+		//ajouter à la liste
+	}
+		
+	//trier la list
+}
+
 std::string URLData::getLinks()
 {
 	std::stringstream tempText;
-	std::string linksText;
-	tempText << "diagraph {\n";
 
+	//writes the dot file
 	std::unordered_map<std::string,int> tempMap;
 	for (auto it = dataMap.begin(); it != dataMap.end(); ++it )
 	{
-
 		tempMap=(it->second)->GetMap();
 		for (auto its = tempMap.begin(); its != tempMap.end(); ++its)
 		{
-			tempText << it->first << " -> " << its->first << " [label=\"" << its->second << "\"];\n";
+			tempText << it->first
+					<< " -> "
+					<< its->first
+					<< " [label=\""
+					<< its->second
+					<< "\"];\n";
 		}
 		
 	}
-	tempText << "}";
 
-	linksText = tempText.str();
+	return "diagraph {\n" + tempText.str() + "}\n";
 
-	std::cout << linksText<< std::endl;
-	return "fin";
 }
