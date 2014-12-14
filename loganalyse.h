@@ -28,7 +28,7 @@ class loganalyse
 
 public:
 //----------------------------------------------------- Méthodes publiques
-    static void read(bool x, bool t, int hour);
+    static void read(bool image, int hour);
     // Mode d'emploi :
     //
     // Contrat :
@@ -82,6 +82,7 @@ typedef struct struct_log {
     std::string gmt;// gmt from request
     std::string action;// type of action
     std::string urlHit;// document and page asked
+    std::string protocol;// protocol used
     std::string returnCode;//status of reponse : 200 shows no error
     std::string octetQuantity;//size of data tranfered from servor
     std::string referer;//url from where is done the request

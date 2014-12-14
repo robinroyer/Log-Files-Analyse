@@ -31,89 +31,114 @@ using namespace std;
 //----------------------------------------------------- Méthodes publiques
 
 
-void loganalyse::read(bool x, bool t, int hour)
-// Algorithme :
+void loganalyse::read(bool affImage, int hour)
+/*contrat :  Les entrees possible de hour doivent etre -1 ou [0;23]
+             Bool image est vrai si on veut l'affichage
+        */
 {
-    // on ouvre le fichier en lecture
+     // déclaration d'une chaîne qui contiendra la ligne lue
+    string contenu; 
+
+    //--------creation de la liste chainee des extensions a ne pas prendre en compte---------
+    if (!image)
+    {
+        ifstream extension("extension.ini", ios::in);//ouverture du flux de lecture
+        if(extension)
+        {
+            while(getline(extension, contenu))
+            {
+                //--------------ajout de chaque extension a la liste chainee
+            }
+        }
+        else
+            cerr << "Impossible d'ouvrir le fichier des extensions !" << endl;
+    }//-------------liste des extensions cree------------
+
+
+
+    // on ouvre le fichier de log en lecture
     ifstream fichier("anonyme.log", ios::in);
-    // on cree la structure de sotckage
+    // on cree la structure de stockage
     struct_log data;
 
     if(fichier)  // si l'ouverture a réussi
-    {
-        // effectuer la lecture ici:
-        string contenu;  // déclaration d'une chaîne qui contiendra la ligne lue
+    {        
         while(getline(fichier, contenu))
         {
-             cout << contenu<<endl;
-             cout<<endl;  // on affiche la ligne
+             cout << contenu<<endl<<endl;// trace pour verifier que les logs sont bien coupes
+             
 
-            // -----------------on va devoir couper et ranger dans la structure ici-------------
-             //emettor
+            // -----------------separation des logs et rangement dans la structure-------------
+             //emettor's IP
             data.ipEmettor=contenu.substr(0,contenu.find_first_of('[',0));
             cout<<data.ipEmettor<<endl;  
 
             contenu=contenu.substr(contenu.find_first_of('[',0)+1,contenu.length());
-            
+            //day
             data.day=contenu.substr(0,contenu.find_first_of(':',0));
             cout<<data.day<<endl;
 
-            contenu=contenu.substr(contenu.find_first_of(':',0),contenu.length());
-
-            data.hour=contenu.substr(1,contenu.find_first_of(' ',0));
+            contenu=contenu.substr(contenu.find_first_of(':',0)+1,contenu.length());
+            //hour
+            data.hour=contenu.substr(0,contenu.find_first_of(':',0));
             cout<<data.hour<<endl;
 
             contenu=contenu.substr(contenu.find_first_of(' ',1)+1,contenu.length());
-
+            //gmt
             data.gmt=contenu.substr(0,contenu.find_first_of(']',0));
             cout<<data.gmt<<endl;
 
             contenu=contenu.substr(contenu.find_first_of('"',0)+1,contenu.length());
-
+            //action
             data.action=contenu.substr(0,contenu.find_first_of('/',0));
             cout<<data.action<<endl;
 
             contenu=contenu.substr(contenu.find_first_of('/',2),contenu.length());
-            
-            data.urlHit=contenu.substr(0,contenu.find_first_of('"',0));
+            //urlHit
+            data.urlHit=contenu.substr(0,contenu.find_first_of(' ',0));
             cout<<data.urlHit<<endl;
 
+            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
+
+            //protocol used
+            data.protocol=contenu.substr(0,contenu.find_first_of('"',0));
+            cout<<data.protocol<<endl;
             contenu=contenu.substr(contenu.find_first_of('"',0)+2,contenu.length());
 
+            //returnCode
             data.returnCode=contenu.substr(0,contenu.find_first_of(' ',1));
             cout<<data.returnCode<<endl;
 
             contenu=contenu.substr(contenu.find_first_of(' ',2)+1,contenu.length());
-
+            //Octet Quantity
             data.octetQuantity=contenu.substr(0,contenu.find_first_of(' ',1));
             cout<<data.octetQuantity<<endl;
 
             contenu=contenu.substr(contenu.find_first_of('"',1)+1,contenu.length());
-
+            //referer
             data.referer=contenu.substr(0,contenu.find_first_of('"',0));
             cout<<data.referer<<endl;
 
             contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
-
+            //browser
             data.browser=contenu.substr(0,contenu.length()-1);
-            cout<<data.browser<<endl; 
-            cout<<endl;  
-
-       
-
-           
-        
-        
-        
-        
-        
-        
+            cout<<data.browser<<endl<<endl; 
             
-         
-                       
-          
-            // appel avec les option pour ranger des nles maps ou pas
 
+          
+            // ----------appel avec les options pour ranger les logs dans notre structure--------
+            if((affImage)//or (loganalyse::isAuthorised(data.urlHit)))  
+            {
+                if (hour==-1){
+
+                // --------------on les ajoutes tous----------
+                }
+                else {
+                    if(std::stoi(data.hour)==hour){
+                    //------------on ajoute les logs correspondant a la bonne heure
+                    }
+                }
+            }      
             //on ferme le fichierx
         }
         fichier.close();
@@ -175,7 +200,7 @@ int main()
 {
     cout << "Hello World!" << endl;
 
-   loganalyse::read(true,true,12);
+   loganalyse::read(true,12);
 
 
     return 0;
