@@ -14,7 +14,7 @@
 //-------------------------------------------------------- Include système
 #include <iostream>
 #include <fstream>
-#include <list>
+#include <vector>
 using namespace std;
 //------------------------------------------------------ Include personnel
 #include "loganalyse.h"
@@ -34,22 +34,22 @@ using namespace std;
 
 void loganalyse::read(bool affImage, int hour)
 /*contrat :  Les entrees possible de hour doivent etre -1 ou [0;23]
-             Bool image est vrai si on veut l'affichage
+             Bool image est vrai si on veut l'affichage des images
         */
 {
      // déclaration d'une chaîne qui contiendra la ligne lue
     string contenu; 
-
+    std::vector<string> myExtensions;
     //--------creation de la liste chainee des extensions a ne pas prendre en compte---------
     if (!affImage)
     {
         ifstream extension("extension.ini", ios::in);//ouverture du flux de lecture
         if(extension)
         {
-            std::list < string > myExtensions;
+            
             while(getline(extension, contenu))
             {
-                //--------------ajout de chaque extension a ma liste d'extensions
+                //--------------ajout de chaque extension a mon vector d'extensions
                 if(contenu.substr(0,1)!="#")
                 {
                     myExtensions.push_back((string)contenu.substr(0,1));
@@ -59,7 +59,7 @@ void loganalyse::read(bool affImage, int hour)
         }
         else
             cerr << "Impossible d'ouvrir le fichier des extensions !" << endl;
-    }//-------------liste des extensions cree------------
+    }//-------------vector des extensions cree------------
 
 
 
@@ -134,17 +134,21 @@ void loganalyse::read(bool affImage, int hour)
 
           
             // ----------appel avec les options pour ranger les logs dans notre structure--------
-            if((affImage))//or (loganalyse::isAuthorised(data.urlHit)))  <- ici tester si on l'extension est authorise 
+            if((affImage)or (loganalyse::isAuthorised(data.urlHit,  myExtensions)))  //<- ici tester si on l'extension est authorise 
             {
-                if (hour==-1){
 
-                // --------------on les ajoutes tous----------
-                }
-                else {
-                    if(std::stoi(data.hour)==hour){
-                    //------------on ajoute les logs correspondant a la bonne heure
+                    if (hour==-1){
+
+                    // --------------on les ajoutes tous----------
+                        cout<<"----------------ajout toutes les heures-------------"<<endl;
                     }
-                }
+                    else {
+                        if(std::stoi(data.hour)==hour){
+                        //------------on ajoute les logs correspondant a la bonne heure
+                            // --------------on les ajoutes tous----------
+                        cout<<"----------------ajout de la bonne heure-------------"<<endl;
+                        }
+                    }
             }      
             //on ferme le fichierx
         }
@@ -155,6 +159,24 @@ void loganalyse::read(bool affImage, int hour)
 
 
 } //----- Fin de Méthode
+
+bool loganalyse::isAuthorised(string url,const std::vector<string> & tab){
+    string toCompare;
+    toCompare=url.substr(url.find_last_of('/',0),url.length());
+    for(int i=0; i<tab.size();i++)
+    {
+        if(toCompare==tab[i])
+        {
+            return false;
+        }
+    }
+
+return true;
+}
+
+
+
+
 
 
 //------------------------------------------------- Surcharge d'opérateurs
@@ -203,11 +225,17 @@ loganalyse::~loganalyse ( )
 //------------------------------------------------------- Méthodes privées
 
 
+
+
+
+
+
+
 int main()
 {
     cout << "Hello World!" << endl;
 
-   loganalyse::read(true,12);
+   loganalyse::read(true,11);
 
     return 0;
 }

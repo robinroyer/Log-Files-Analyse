@@ -33,8 +33,8 @@ public:
     //
     // Contrat :
     //
+    static bool isAuthorised(string url,const std::vector<string> & tab );
 
-    
 
 //------------------------------------------------- Surcharge d'opérateurs
     loganalyse & operator = ( const loganalyse & unloganalyse );
