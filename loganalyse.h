@@ -34,6 +34,7 @@ public:
     // Contrat :
     //
 
+    
 
 //------------------------------------------------- Surcharge d'opérateurs
     loganalyse & operator = ( const loganalyse & unloganalyse );

@@ -14,6 +14,7 @@
 //-------------------------------------------------------- Include système
 #include <iostream>
 #include <fstream>
+#include <list>
 using namespace std;
 //------------------------------------------------------ Include personnel
 #include "loganalyse.h"
@@ -40,15 +41,21 @@ void loganalyse::read(bool affImage, int hour)
     string contenu; 
 
     //--------creation de la liste chainee des extensions a ne pas prendre en compte---------
-    if (!image)
+    if (!affImage)
     {
         ifstream extension("extension.ini", ios::in);//ouverture du flux de lecture
         if(extension)
         {
+            std::list < string > myExtensions;
             while(getline(extension, contenu))
             {
-                //--------------ajout de chaque extension a la liste chainee
+                //--------------ajout de chaque extension a ma liste d'extensions
+                if(contenu.substr(0,1)!="#")
+                {
+                    myExtensions.push_back((string)contenu.substr(0,1));
+                } 
             }
+            extension.close();
         }
         else
             cerr << "Impossible d'ouvrir le fichier des extensions !" << endl;
@@ -127,7 +134,7 @@ void loganalyse::read(bool affImage, int hour)
 
           
             // ----------appel avec les options pour ranger les logs dans notre structure--------
-            if((affImage)//or (loganalyse::isAuthorised(data.urlHit)))  
+            if((affImage))//or (loganalyse::isAuthorised(data.urlHit)))  <- ici tester si on l'extension est authorise 
             {
                 if (hour==-1){
 
@@ -201,7 +208,6 @@ int main()
     cout << "Hello World!" << endl;
 
    loganalyse::read(true,12);
-
 
     return 0;
 }
