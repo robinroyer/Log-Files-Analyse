@@ -21,12 +21,19 @@ class URLStats
 
 		int AddHit();
 
-		int GetHits();
+		int GetHits() const;
+
+		int GetNumberOfReferer() const;
+
+		std::unordered_map<std::string,int> GetMap();
+
+		int AddReferer(std::string referer);
 
 	private:
 
 		std::unordered_map<std::string,int> statsMap;
-		int hits;
+		unsigned int hits;
+		unsigned int howManyReferer;
 
 };
 
