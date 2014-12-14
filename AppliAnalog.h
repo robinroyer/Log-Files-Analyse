@@ -33,6 +33,7 @@ class AppliAnalog
 		 * @return the code of the application, details in the readme file
 		 */
 
+
 		 bool hasOption(char opt);
 
 		 bool hasCorrectValueOption(char opt);
@@ -41,6 +42,7 @@ class AppliAnalog
 	private:
 		//attributes
 		std::list <std::string> options;
+
 };
 
 #endif //AppliAnalog_h

@@ -1,11 +1,15 @@
 //includes
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <list>
 
 #include "AppliAnalog.h"
 #include "URLData.h"
 #include "Graph.h"
+
+using namespace std;
+
 
 AppliAnalog::AppliAnalog(int argc, char* argv[])
 {
@@ -88,13 +92,6 @@ bool AppliAnalog::hasCorrectValueOption(char opt)
 	return false;
 }
 
-/*
-bool AppliAnalog::hasCorrectValueOption(std::string filename, std::string extention)
-{
-	if()
-}
- */
-
 int AppliAnalog::Execute()
 {
 	#ifdef DEBUG
@@ -134,12 +131,7 @@ int AppliAnalog::Execute()
 
     URLData* data = new URLData(hasOption('g'));
 
-    data->AddLine("facebook.fr","google.fr");
-    data->AddLine("facebook.fr","google.fr");
-    data->AddLine("facebook.fr","yahou.fr");
-    data->AddLine("yahoo.fr","google.fr");
-
-
+    data->read(true,-1);
 
     data->Displays();
     data->TopTen();
@@ -154,6 +146,8 @@ int AppliAnalog::Execute()
     return 0;
 
 }
+
+
 
 int main (int argc, char* argv[])
 {
