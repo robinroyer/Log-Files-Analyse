@@ -79,7 +79,8 @@ std::string URLData::getLinks()
 	///-------- nodes -----
 	for (auto it = dataMap.begin(); it != dataMap.end(); ++it )
 	{
-		tempText << clearName(it->first)
+		tempText << "ID"
+				<< hashStringToInt(it->first)
 				<< " [label=\"" 
 				<<	it->first
 				<<  "\"];\n";
@@ -90,61 +91,52 @@ std::string URLData::getLinks()
 		tempMap=(it->second)->GetMap();
 		for (auto its = tempMap.begin(); its != tempMap.end(); ++its)
 		{
-			if(its->first != "-")
+			if(its->first != "-" and its->second > 1000)
 			{
-				tempText << clearName(its->first)
-								<< " -> "
-								<< clearName(it->first)
-								<< " [label=\""
-								<< its->second
-								<< "\"];\n";
+				tempText << "ID"
+							<< hashStringToInt(its->first)
+							<< " -> "
+							<< "ID"
+							<< hashStringToInt(it->first)
+							<< " [label=\""
+							<< its->second
+							<< "\"];\n";
 			}
 		}
 	}
 
-	return "diagraph {\n" + tempText.str() + "}\n";
+	return "digraph {\n" + tempText.str() + "}\n";
 
 }
 
-bool URLData::isPHP(std::string str)
+std::string URLData::clearURL(std::string str)
 {
-    std::size_t found = str.rfind("php");
-    if (found!=std::string::npos)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
+	if (str.rfind("/?")!=std::string::npos or str.rfind("php?")!=std::string::npos)
+	{
+		std::size_t found = str.rfind("?");
+    	if (found!=std::string::npos)
+        	str = str.substr(0, found);
+	}
+	else if (str.rfind("favicon.ico")!=std::string::npos)
+	{
+		std::size_t found = str.rfind(";");
+    	if (found!=std::string::npos)
+        	str = str.substr(0, found);
+	}
+	else if (str.rfind("/")==(std::string::npos)-1)
+	{
+		str = str.substr(0, std::string::npos-1);
+	}
 
-std::string URLData::clearPHP(std::string str)
-{
-    std::size_t found = str.rfind("?");
-    if (found!=std::string::npos)
-        return str.substr(0, found);
-    else
-        return str;
-}
-
-std::string URLData::clearName(std::string str)
-{
-    str.erase (std::remove(str.begin(), str.end(), '.'), str.end());
-    str.erase (std::remove(str.begin(), str.end(), '%'), str.end());
-    str.erase (std::remove(str.begin(), str.end(), '?'), str.end());
-    str.erase (std::remove(str.begin(), str.end(), '-'), str.end());
-    str.erase (std::remove(str.begin(), str.end(), ';'), str.end());
-    str.erase (std::remove(str.begin(), str.end(), '='), str.end());
-    str.erase (std::remove(str.begin(), str.end(), '/'), str.end());
-    str.erase (std::remove(str.begin(), str.end(), '&'), str.end());    
-    str.erase (std::remove(str.begin(), str.end(), ':'), str.end());  
-    str.erase (std::remove(str.begin(), str.end(), ','), str.end());
 	return str;
 
-
 }
 
+
+int URLData::hashStringToInt(std::string str)
+{
+	return std::hash<std::string>()(str);
+}
 int URLData::read(bool affImage, int hour)
 /*contrat :  Les entrees possible de hour doivent etre -1 ou [0;23]
              Bool image est vrai si on veut l'affichage des images
@@ -228,17 +220,12 @@ int URLData::read(bool affImage, int hour)
             #endif
             contenu=contenu.substr(contenu.find_first_of('/',2),contenu.length());
             //urlHit
-            if(isPHP(contenu.substr(0,contenu.find_first_of(' ',0))))
-            {
-        		data.urlHit=clearPHP(contenu.substr(0,contenu.find_first_of(' ',0)));
-            }
-            else
-        	{
-        		data.urlHit=contenu.substr(0,contenu.find_first_of(' ',0));
-        	}
+            data.urlHit=contenu.substr(0,contenu.find_first_of(' ',0));
+        	
             #ifdef MAP
             cout<<data.urlHit<<endl;
             #endif
+
             contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
 
             //protocol used
@@ -263,7 +250,9 @@ int URLData::read(bool affImage, int hour)
 
             contenu=contenu.substr(contenu.find_first_of('"',1)+1,contenu.length());
             //referer
-            data.referer=contenu.substr(0,contenu.find_first_of('"',0));
+			data.referer=contenu.substr(0,contenu.find_first_of('"',0));
+
+
             #ifdef MAP
             cout<<data.referer<<endl;
             #endif
@@ -274,9 +263,6 @@ int URLData::read(bool affImage, int hour)
             #ifdef MAP
             cout<<data.browser<<endl<<endl; 
             #endif
-            
-            AddLine(data.urlHit,data.referer);
-
 
             //on cherche si lextension est conforme
             exclusion=false;
@@ -287,6 +273,8 @@ int URLData::read(bool affImage, int hour)
                     #ifdef MAP
                     cout<<"extension trouve a la place"<<data.urlHit.find(*it)<<endl;
                     cout<<*it <<endl;
+
+
                     #endif
                     exclusion =true;
                 }
@@ -299,7 +287,7 @@ int URLData::read(bool affImage, int hour)
 
                     if (hour==-1){
 
-                        // --------------on les ajoutes tous----------
+						AddLine(data.urlHit,data.referer);
                         #ifdef MAP
                         cout<<"----------------ajout toutes les heures-------------"<<endl;
                         #endif
@@ -307,11 +295,10 @@ int URLData::read(bool affImage, int hour)
                     else {
                         if(std::stoi(data.hour)==hour){
                             //------------on ajoute les logs correspondant a la bonne heure
-                            // --------------on les ajoutes tous----------
+							AddLine(data.urlHit,data.referer);
                             #ifdef MAP
                             cout<<"----------------ajout de la bonne heure-------------"<<endl;
                             #endif
-
                         }
                     }
             }      

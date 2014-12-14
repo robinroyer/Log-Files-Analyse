@@ -36,14 +36,13 @@ class URLData
 
 		 int read(bool affImage, int hour);
 
-		 std::string clearPHP(std::string str);
-
-		 bool isPHP(std::string);
 
 
 
 	private:
-		std::string clearName(std::string str);
+		int hashStringToInt(std::string str);
+
+		std::string clearURL(std::string str);
 
 		std::unordered_map<std::string, URLStats*> dataMap;
 		std::list<std::string> topTen;

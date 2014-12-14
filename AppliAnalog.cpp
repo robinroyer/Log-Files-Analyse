@@ -131,7 +131,7 @@ int AppliAnalog::Execute()
 
     URLData* data = new URLData(hasOption('g'));
 
-    data->read(true,-1);
+    data->read(false,-1);
 
     data->Displays();
     data->TopTen();
