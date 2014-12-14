@@ -1,9 +1,9 @@
 CXX=g++ -std=c++11
 
 analog: AppliAnalog.o URLData.o URLStats.o
-	$(CXX) -o  analog AppliAnalog.o URLData.o	
+	$(CXX) -o  analog AppliAnalog.o URLData.o URLStats.o	
 
-AppliAnalog.o: AppliAnalog.cpp AppliAnalog.h URLData.h
+AppliAnalog.o: AppliAnalog.cpp AppliAnalog.h URLData.h Graph.o
 	$(CXX) -c AppliAnalog.cpp
 
 URLData.o: URLData.cpp URLData.h URLStats.h
@@ -11,6 +11,9 @@ URLData.o: URLData.cpp URLData.h URLStats.h
 
 URLStats.o: URLStats.cpp URLStats.h
 	$(CXX) -c URLStats.cpp
+
+Graph.o: Graph.cpp Graph.h URLData.h
+	$(CXX) -c Graph.cpp
 
 
 

@@ -26,15 +26,17 @@ class URLData
 
 		 int AddAll(std::string logFile);
 
-		 int AddLine(std::string line);
+		 int AddLine(std::string url, std::string referer);
 
 		 void Displays();
+
+		 std::string getLinks();
 
 
 	private:
 
 		std::unordered_map<std::string, URLStats*> dataMap;
-		std:list 
+		std::list<std::string> topTen;
 		bool optionG;
 
 };

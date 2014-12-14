@@ -9,6 +9,7 @@ URLStats::URLStats()
 	#endif
 
 	hits=0;
+	howManyReferer=0;
 }
 
 URLStats::~URLStats()
@@ -24,7 +25,29 @@ int URLStats::AddHit()
 	return 0;
 }
 
-int URLStats::GetHits()
+int URLStats::GetHits() const
 {
 	return hits;
+}
+
+int URLStats::GetNumberOfReferer() const
+{
+	return howManyReferer;
+}
+
+
+std::unordered_map<std::string,int> URLStats::GetMap()
+{
+	return statsMap;
+}
+
+
+int URLStats::AddReferer(std::string referer)
+{
+	if(statsMap.find(referer) == statsMap.end())
+	{
+		statsMap[referer] = 0;
+		howManyReferer++;
+	}
+	statsMap[referer]++;
 }

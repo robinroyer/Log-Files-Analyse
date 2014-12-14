@@ -5,6 +5,7 @@
 
 #include "AppliAnalog.h"
 #include "URLData.h"
+#include "Graph.h"
 
 AppliAnalog::AppliAnalog(int argc, char* argv[])
 {
@@ -133,14 +134,21 @@ int AppliAnalog::Execute()
 
     URLData* data = new URLData(hasOption('g'));
 
-    data->AddLine("google.fr");
-    data->AddLine("google.fr");
-    data->AddLine("google.fr");
-    data->AddLine("yahoo.fr");
+    data->AddLine("facebook.fr","google.fr");
+    data->AddLine("facebook.fr","google.fr");
+    data->AddLine("facebook.fr","yahou.fr");
+    data->AddLine("yahoo.fr","google.fr");
+
+
 
     data->Displays();
 
+    Graph* graph = new Graph("coucou.dot");
+
+    graph->GenerateDot(data);
+
     delete data;
+    delete graph;
 
     return 0;
 
