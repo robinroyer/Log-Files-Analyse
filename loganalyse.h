@@ -75,16 +75,18 @@ protected:
 
 private:
 //------------------------------------------------------- Attributs privés
-struct struct_log {
-    string ipEmettor;// client's identity
-    tm date;// date and hour from the request
-    string action;// type of action
-    string urlHit;// document and page asked
-    int returnCode;//status of reponse : 200 shows no error
-    int octetQuantity;//size of data tranfered from servor
-    string referer;//url from where is done the request
-    string browser;//client's browsers
-};
+typedef struct struct_log {
+    std::string ipEmettor;// client's identity
+    std::string day;// date from the request
+    std::string hour;//hour from the request
+    std::string gmt;// gmt from request
+    std::string action;// type of action
+    std::string urlHit;// document and page asked
+    std::string returnCode;//status of reponse : 200 shows no error
+    std::string octetQuantity;//size of data tranfered from servor
+    std::string referer;//url from where is done the request
+    std::string browser;//client's browsers
+}struct_log;
 
 //---------------------------------------------------------- Classes amies
 
