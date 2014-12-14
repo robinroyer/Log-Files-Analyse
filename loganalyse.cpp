@@ -14,7 +14,7 @@
 //-------------------------------------------------------- Include système
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <list>
 using namespace std;
 //------------------------------------------------------ Include personnel
 #include "loganalyse.h"
@@ -39,7 +39,10 @@ void loganalyse::read(bool affImage, int hour)
 {
      // déclaration d'une chaîne qui contiendra la ligne lue
     string contenu; 
-    std::vector<string> myExtensions;
+    //liste d'exception
+    std::list<string> myExtensions;
+    //boolean vrai si cette structure a une extension a exclure
+    bool exclusion;
     //--------creation de la liste chainee des extensions a ne pas prendre en compte---------
     if (!affImage)
     {
@@ -50,11 +53,14 @@ void loganalyse::read(bool affImage, int hour)
             while(getline(extension, contenu))
             {
                 //--------------ajout de chaque extension a mon vector d'extensions
+
                 if(contenu.substr(0,1)!="#")
                 {
-                    myExtensions.push_back((string)contenu.substr(0,1));
+                    myExtensions.push_back(contenu);
+                    
                 } 
             }
+            
             extension.close();
         }
         else
@@ -72,81 +78,118 @@ void loganalyse::read(bool affImage, int hour)
     {        
         while(getline(fichier, contenu))
         {
-             cout << contenu<<endl<<endl;// trace pour verifier que les logs sont bien coupes
-             
+            #ifdef MAP
+             cout <<"la ligne de log est : "<<endl<< contenu<<endl<<endl;// trace pour verifier que les logs sont bien coupes
+            #endif
+
 
             // -----------------separation des logs et rangement dans la structure-------------
              //emettor's IP
             data.ipEmettor=contenu.substr(0,contenu.find_first_of('[',0));
+            #ifdef MAP
             cout<<data.ipEmettor<<endl;  
-
+            #endif
             contenu=contenu.substr(contenu.find_first_of('[',0)+1,contenu.length());
             //day
             data.day=contenu.substr(0,contenu.find_first_of(':',0));
+            #ifdef MAP
             cout<<data.day<<endl;
-
+            #endif
             contenu=contenu.substr(contenu.find_first_of(':',0)+1,contenu.length());
             //hour
             data.hour=contenu.substr(0,contenu.find_first_of(':',0));
+            #ifdef MAP
             cout<<data.hour<<endl;
-
+            #endif
             contenu=contenu.substr(contenu.find_first_of(' ',1)+1,contenu.length());
             //gmt
             data.gmt=contenu.substr(0,contenu.find_first_of(']',0));
+            #ifdef MAP
             cout<<data.gmt<<endl;
-
+            #endif
             contenu=contenu.substr(contenu.find_first_of('"',0)+1,contenu.length());
             //action
             data.action=contenu.substr(0,contenu.find_first_of('/',0));
+            #ifdef MAP
             cout<<data.action<<endl;
-
+            #endif
             contenu=contenu.substr(contenu.find_first_of('/',2),contenu.length());
             //urlHit
             data.urlHit=contenu.substr(0,contenu.find_first_of(' ',0));
+            #ifdef MAP
             cout<<data.urlHit<<endl;
-
+            #endif
             contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
 
             //protocol used
             data.protocol=contenu.substr(0,contenu.find_first_of('"',0));
+            #ifdef MAP
             cout<<data.protocol<<endl;
+            #endif
             contenu=contenu.substr(contenu.find_first_of('"',0)+2,contenu.length());
 
             //returnCode
             data.returnCode=contenu.substr(0,contenu.find_first_of(' ',1));
+            #ifdef MAP
             cout<<data.returnCode<<endl;
+            #endif
 
             contenu=contenu.substr(contenu.find_first_of(' ',2)+1,contenu.length());
             //Octet Quantity
             data.octetQuantity=contenu.substr(0,contenu.find_first_of(' ',1));
+            #ifdef MAP
             cout<<data.octetQuantity<<endl;
+            #endif
 
             contenu=contenu.substr(contenu.find_first_of('"',1)+1,contenu.length());
             //referer
             data.referer=contenu.substr(0,contenu.find_first_of('"',0));
+            #ifdef MAP
             cout<<data.referer<<endl;
+            #endif
 
             contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
             //browser
             data.browser=contenu.substr(0,contenu.length()-1);
+            #ifdef MAP
             cout<<data.browser<<endl<<endl; 
+            #endif
             
+
+            //on cherche si lextension est conforme
+            exclusion=false;
+            for (std::list<string>::iterator it = myExtensions.begin(); it != myExtensions.end(); it++)
+             {
+                 if((data.urlHit.find(*it)>0)&&(data.urlHit.find(*it)<=data.urlHit.length()))
+                {
+                    #ifdef MAP
+                    cout<<"extension trouve a la place"<<data.urlHit.find(*it)<<endl;
+                    cout<<*it <<endl;
+                    #endif
+                    exclusion =true;
+                }
+             }
 
           
             // ----------appel avec les options pour ranger les logs dans notre structure--------
-            if((affImage)or (loganalyse::isAuthorised(data.urlHit,  myExtensions)))  //<- ici tester si on l'extension est authorise 
+            if((affImage==true) ||(exclusion==false))  //on  test si  l'extension est autorise 
             {
 
                     if (hour==-1){
 
-                    // --------------on les ajoutes tous----------
+                        // --------------on les ajoutes tous----------
+                        #ifdef MAP
                         cout<<"----------------ajout toutes les heures-------------"<<endl;
+                        #endif
                     }
                     else {
                         if(std::stoi(data.hour)==hour){
-                        //------------on ajoute les logs correspondant a la bonne heure
+                            //------------on ajoute les logs correspondant a la bonne heure
                             // --------------on les ajoutes tous----------
-                        cout<<"----------------ajout de la bonne heure-------------"<<endl;
+                            #ifdef MAP
+                            cout<<"----------------ajout de la bonne heure-------------"<<endl;
+                            #endif
+
                         }
                     }
             }      
@@ -159,21 +202,6 @@ void loganalyse::read(bool affImage, int hour)
 
 
 } //----- Fin de Méthode
-
-bool loganalyse::isAuthorised(string url,const std::vector<string> & tab){
-    string toCompare;
-    toCompare=url.substr(url.find_last_of('/',0),url.length());
-    for(int i=0; i<tab.size();i++)
-    {
-        if(toCompare==tab[i])
-        {
-            return false;
-        }
-    }
-
-return true;
-}
-
 
 
 
@@ -235,7 +263,7 @@ int main()
 {
     cout << "Hello World!" << endl;
 
-   loganalyse::read(true,11);
+   loganalyse::read(false,-1);
 
     return 0;
 }
