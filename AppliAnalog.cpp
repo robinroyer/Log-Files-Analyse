@@ -8,8 +8,6 @@
 #include "URLData.h"
 #include "Graph.h"
 
-using namespace std;
-
 
 AppliAnalog::AppliAnalog(int argc, char* argv[])
 {
@@ -17,9 +15,7 @@ AppliAnalog::AppliAnalog(int argc, char* argv[])
     std::cout << "AppliAnalog +1" << std::endl;
 	#endif
 
-	options = std::list <std::string> ();
-
-	//stock options in a list of string
+	//store options in a list of string
 	for (int i = 0; i < argc; i++)
 	{
 		options.push_back(std::string(argv[i]));
@@ -33,12 +29,18 @@ AppliAnalog::~AppliAnalog()
 	#endif
 }
 
-bool AppliAnalog::hasOption(char opt)
+bool AppliAnalog::is_number(const std::string& s)
+{
+    return !s.empty() && std::find_if(s.begin(), 
+        s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+}
+
+bool AppliAnalog::hasOption(char params)
 {
 	std::list<std::string>::const_iterator it, end;
     for(it = this->options.begin(), end = this->options.end(); it != end; it++)
     {
-        if(it->at(0)=='-' and it->at(1)==opt and it->size()<3)
+        if(it->at(0)=='-' and it->at(1)==params and it->size()<3)
         {
         		return true;
         }
@@ -46,10 +48,10 @@ bool AppliAnalog::hasOption(char opt)
     return false;
 }
 
-bool AppliAnalog::hasCorrectValueOption(char opt)
+bool AppliAnalog::hasCorrectValueOption(char params)
 {
 	std::list<std::string>::const_iterator it, end;
-	switch (opt)
+	switch (params)
 	{
 		case '0': //check if the name of the logfile is correct
 			if(options.back().at(0)!='-' and options.back().find(".log")!=-1)
@@ -61,24 +63,22 @@ bool AppliAnalog::hasCorrectValueOption(char opt)
 		case 't': //check if the time format is correct
 			for(it = this->options.begin(), end = this->options.end(); it != end; it++)
     		{
-    			/*
-    			 * Incorrect pour l'instant
-    			 *
-    			 *
-        		if(it->at(1)==opt and std::stoi(*(it++))>0 and std::stoi(*it)>24) //pas beau, a modifier en it.next 
+                //test if the params is a number
+    			if(it->at(1)==params and is_number(*std::next(it)))
         		{
-        			return true;
-        		}
-
-        		std::cout<< std::stoi(*it) << std::endl;
-        		*/
+                    //if it is a number, we can test if is is between 0 and 23 (we accept 2.5 as 2 for exemple)
+        			if(std::stoi(*std::next(it)) >= 0 and std::stoi(*std::next(it)) < 24)
+                    {
+                        return true;
+                    }
+                }
         	}
 		break;
 
 		case 'g': //check if the name of the dotfile is correct
 			for(it = this->options.begin(), end = this->options.end(); it != end; it++)
     		{
-        		if(it->at(1)==opt and ((++it))->find(".dot")!=-1) //pas beau, a modifier en it.next 
+        		if(it->at(1)==params and ((++it))->find(".dot")!=-1) //pas beau, a modifier en it.next 
         		{
         			return true;
         		}
@@ -92,6 +92,57 @@ bool AppliAnalog::hasCorrectValueOption(char opt)
 	return false;
 }
 
+std::string AppliAnalog::ValueOption(char params)
+{
+    std::list<std::string>::const_iterator it, end;
+    switch (params)
+    {
+        case '0': 
+            //return the last options: the name of the logfil
+            #ifdef DEBUG
+            std::cout << options.back() << std::endl;
+            #endif
+            return options.back();
+        break;
+
+        case 't':
+            //find the t params
+            for(it = this->options.begin(), end = this->options.end(); it != end; it++)
+            {
+                if(it->at(1)==params)
+                {
+                    #ifdef DEBUG
+                    std::cout << options.back() << std::endl;
+                    #endif
+                    return *(std::next(it));
+                }
+            }
+        break;
+
+        case 'g':
+            //find the g params
+            for(it = this->options.begin(), end = this->options.end(); it != end; it++)
+            {
+                if(it->at(1)==params) 
+                {
+                    //return the name of the dot file
+                    #ifdef DEBUG
+                    std::cout << options.back() << std::endl;
+                    #endif
+                    return *(std::next(it));
+                }
+            }           
+        break;
+
+        default:
+            return "ERROR";
+        break;
+    }
+    return "ERROR";
+}
+
+
+
 int AppliAnalog::Execute()
 {
 	#ifdef DEBUG
@@ -104,53 +155,49 @@ int AppliAnalog::Execute()
     	return 1; //filename of the logfile invalid
     }
 
-    if(hasOption('x'))
-    {
-    	std::cout<< "Option x" << std::endl;
-    }
-
     if(hasOption('t'))
     {
-    	if(!hasCorrectValueOption('t'))
-    	{
-    		std::cerr<< "ERROR2: The time is incorrect."<<std::endl;
-    		return 2;
-    	}
-    	std::cout<< "Option t" << std::endl;
+        if(!hasCorrectValueOption('t'))
+        {
+            std::cerr<< "ERROR2: The time is incorrect."<<std::endl;
+            return 2;
+        }
     }
 
     if(hasOption('g'))
     {
-    	if(!hasCorrectValueOption('g'))
-    	{
-    		std::cerr<< "ERROR2: The dotfile is incorrect."<<std::endl;
-    		return 2;
-    	}
-    	std::cout<< "Option g" << std::endl;
+        if(!hasCorrectValueOption('g'))
+        {
+            std::cerr<< "ERROR3: The dotfile is incorrect."<<std::endl;
+            return 3;
+        }
     }
 
-    URLData* data = new URLData(hasOption('g'));
+    //All the options are correct, starts the application!
+    URLData* data = new URLData();
 
-    data->read(false,-1);
-
-    //data->Displays();
+    //Read the logfile and put information from it in data
+    if(hasOption('t'))
+    {
+        data->read(!hasOption('x'), ValueOption('t'), ValueOption('0'));
+    }
+    else
+    {
+        data->read(!hasOption('x'), "-1", ValueOption('0'));
+    }
+    //displays the top ten websites
     data->TopTen();
 
-    Graph* graph = new Graph("coucou.dot");
-
-    graph->GenerateDot(data);
-
-    (data->test).sort();
-
-    auto itend = (data->test).begin();
-    for (itend; itend!=data->test.end(); itend++)
+    //generate the dot file if option -g
+    if(hasOption('g'))
     {
-        itend++;
-        std::cout << *itend << " : " << std::endl;
+        Graph* graph = new Graph(ValueOption('g'));
+        graph->GenerateDot(data);
+        delete graph;
+
     }
 
     delete data;
-    //delete graph;
 
     return 0;
 

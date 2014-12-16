@@ -36,7 +36,7 @@ int URLStats::GetNumberOfReferer() const
 }
 
 
-std::unordered_map<std::string,int> URLStats::GetMap()
+std::unordered_map<std::string,int> URLStats::GetMap() const
 {
 	return statsMap;
 }
@@ -50,4 +50,5 @@ int URLStats::AddReferer(std::string referer)
 		howManyReferer++;
 	}
 	statsMap[referer]++;
+	return 0;
 }

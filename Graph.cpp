@@ -25,10 +25,6 @@ int Graph::GenerateDot(URLData* data)
 	//generate the text of the dot file
 	dotText=data->getLinks();
 
-	#ifdef DEBUG
-	std::cout << dotText<< std::endl;
-	#endif
-
 	//creates the file
 	std::filebuf fb;
 	fb.open (fileName,std::ios::out);

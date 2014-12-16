@@ -25,7 +25,7 @@ class URLStats
 
 		int GetNumberOfReferer() const;
 
-		std::unordered_map<std::string,int> GetMap();
+		std::unordered_map<std::string,int> GetMap() const;
 
 		int AddReferer(std::string referer);
 
@@ -37,4 +37,4 @@ class URLStats
 
 };
 
-#endif // URLData_h
+#endif // URLStats_h

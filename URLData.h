@@ -7,12 +7,13 @@
 
 #include "URLStats.h"
 #include "URLHits.h"
+
 class URLData
 
 
 {
 	public:
-		URLData(bool isOptionG);
+		URLData();
 		/**
 		 * Creates the structure of the URL data
 		 * @params isOptionG true if the user uses -g option
@@ -24,37 +25,25 @@ class URLData
 		 * Destroys the URLData
 		 */
 
-		 int AddAll(std::string logFile);
-
 		 int AddLine(std::string url, std::string referer);
-
-		 void Displays();
 
 		 int TopTen();
 
 		 std::string getLinks();
 
-		 int read(bool affImage, int hour);
-
-		 std::list<std::string> test;
-
-
-
+		 int read(bool affImage, std::string hour, std::string logname, bool clean = false);
 
 	private:
-		int hashStringToInt(std::string str);
-
-		std::string clearURL(std::string str);
+		//functions
+		std::string clearURL(bool clean, std::string str);
 
 		int addTopTen(std::string str, int hits);
 
+		//attributes
+
 		std::unordered_map<std::string, URLStats*> dataMap;
 
-
-
 		std::list<URLHits> listTopTen;
-		
-		bool optionG;
 
 		typedef struct struct_log {
 		    std::string ipEmettor;// client's identity

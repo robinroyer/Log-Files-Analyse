@@ -32,16 +32,18 @@ class AppliAnalog
 		 * @return the code of the application, details in the readme file
 		 */
 
+		 bool is_number(const std::string& s);
 
-		 bool hasOption(char opt);
+		 bool hasOption(char option);
 
-		 bool hasCorrectValueOption(char opt);
+		 bool hasCorrectValueOption(char option);
+
+		 std::string ValueOption(char option);
 
 
 	private:
 		//attributes
 		std::list <std::string> options;
-
 };
 
 
