@@ -6,7 +6,7 @@
 #include <list>
 
 #include "URLStats.h"
-
+#include "URLHits.h"
 class URLData
 
 
@@ -36,6 +36,8 @@ class URLData
 
 		 int read(bool affImage, int hour);
 
+		 std::list<std::string> test;
+
 
 
 
@@ -44,8 +46,14 @@ class URLData
 
 		std::string clearURL(std::string str);
 
+		int addTopTen(std::string str, int hits);
+
 		std::unordered_map<std::string, URLStats*> dataMap;
-		std::list<std::string> topTen;
+
+
+
+		std::list<URLHits> listTopTen;
+		
 		bool optionG;
 
 		typedef struct struct_log {

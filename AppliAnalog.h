@@ -5,7 +5,6 @@
 
 #include <list>
 
-
 class AppliAnalog
 
 /**
@@ -44,5 +43,6 @@ class AppliAnalog
 		std::list <std::string> options;
 
 };
+
 
 #endif //AppliAnalog_h

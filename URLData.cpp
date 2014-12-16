@@ -1,12 +1,14 @@
 //includes
-#include "URLData.h"
-#include "URLStats.h"
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <list>
 #include <algorithm>
+
+#include "URLData.h"
+#include "URLStats.h"
+
 using namespace std;
 
 	
@@ -60,12 +62,26 @@ int URLData::TopTen()
 {
 	for ( auto it = dataMap.begin(); it != dataMap.end(); ++it )
 	{
-		//std::cout << " " << it->first << ":" << (it->second)->GetHits() << std::endl;
-		//créer structure 
-		//ajouter à la liste
+        addTopTen(it->first,(it->second)->GetHits());
 	}
-		
-	//trier la list
+	
+	listTopTen.sort();
+	
+    auto itend = listTopTen.end();
+	for (int i = 0; i < 10; i++)
+    {
+        itend--;
+        std::cout << itend->name << " : " << itend->hits << std::endl;
+    }
+
+   	return 0;
+}
+
+int URLData::addTopTen(std::string str, int hits)
+{
+    URLHits newURL(str, hits);
+    listTopTen.push_back(newURL);
+    return 0;
 }
 
 std::string URLData::getLinks()
@@ -77,31 +93,47 @@ std::string URLData::getLinks()
 
 	//str.erase(std::remove(str.begin(), str.end(), 'a'), str.end());
 	///-------- nodes -----
+	/*
 	for (auto it = dataMap.begin(); it != dataMap.end(); ++it )
 	{
-		tempText << "ID"
+		tempText /*<< "ID"
 				<< hashStringToInt(it->first)
-				<< " [label=\"" 
+				<< " [label=\""
 				<<	it->first
-				<<  "\"];\n";
+				/*<<  "\"];\n"
+                << "\n";
 	}
+    */
 
+    for (auto it = dataMap.begin(); it != dataMap.end(); ++it )
+    {
+        tempMap=(it->second)->GetMap();
+        for (auto its = tempMap.begin(); its != tempMap.end(); ++its)
+        {
+                tempText <<it->first
+                            <<"\n"
+                            << its->first
+                            << "\n";
+        }
+    }
+	
+	///------- links -----
 	for (auto it = dataMap.begin(); it != dataMap.end(); ++it )
 	{
 		tempMap=(it->second)->GetMap();
 		for (auto its = tempMap.begin(); its != tempMap.end(); ++its)
 		{
-			if(its->first != "-" and its->second > 1000)
-			{
-				tempText << "ID"
-							<< hashStringToInt(its->first)
+				tempText << "\""
+							<< its->first
+                            << "\""
 							<< " -> "
-							<< "ID"
-							<< hashStringToInt(it->first)
+							/*<< "ID"*/
+                            << "\""
+							<< it->first
+                            << "\""
 							<< " [label=\""
 							<< its->second
 							<< "\"];\n";
-			}
 		}
 	}
 
@@ -111,22 +143,74 @@ std::string URLData::getLinks()
 
 std::string URLData::clearURL(std::string str)
 {
-	if (str.rfind("/?")!=std::string::npos or str.rfind("php?")!=std::string::npos)
+
+    test.push_back(str);
+
+	if (str.find("?")!=std::string::npos /*or str.rfind("php?")!=std::string::npos or str.rfind("url?")!=std::string::npos */)
 	{
-		std::size_t found = str.rfind("?");
+		std::size_t found = str.find("?");
     	if (found!=std::string::npos)
         	str = str.substr(0, found);
 	}
-	else if (str.rfind("favicon.ico")!=std::string::npos)
+	if (str.rfind(";")!=std::string::npos)
 	{
 		std::size_t found = str.rfind(";");
     	if (found!=std::string::npos)
         	str = str.substr(0, found);
 	}
-	else if (str.rfind("/")==(std::string::npos)-1)
+	if (str.back() == '/')
 	{
-		str = str.substr(0, std::string::npos-1);
+		str.erase (str.end()-1, str.end());
 	}
+    if (str.find("insa-lyon.fr")!=std::string::npos)
+    {
+        if (str.find(".fr:90")!=std::string::npos)
+        {
+            std::size_t found = str.find("90");
+            if (found!=std::string::npos)
+                str = str.substr(found+2, str.size());
+        }
+        else if (str.find(".fr")!=std::string::npos)
+        {
+            std::size_t found = str.find(".fr");
+            if (found!=std::string::npos)
+                str = str.substr(found+3, str.size());
+        }
+        
+    }
+    if (str.find("intranet-if")!=std::string::npos)
+    {
+        if (str.find("90")!=std::string::npos)
+        {
+            std::size_t found = str.find("90");
+            if (found!=std::string::npos)
+                str = str.substr(found+2, str.size());
+        }
+        
+    }
+    //google
+    if (str.find("google")!=std::string::npos)
+    {
+        str = "Google";
+        
+    }
+    //bing
+    if (str.find("bing")!=std::string::npos)
+    {
+        str = "Bing";
+        
+    }
+    //facebook
+    if (str.find("facebook")!=std::string::npos)
+    {
+        str = "Facebook";
+        
+    }
+    if (str.find("stages/descriptif")!=std::string::npos)
+    {
+        str = "/stages";
+    }
+    //intranet
 
 	return str;
 
@@ -191,77 +275,62 @@ int URLData::read(bool affImage, int hour)
             // -----------------separation des logs et rangement dans la structure-------------
              //emettor's IP
             data.ipEmettor=contenu.substr(0,contenu.find_first_of('[',0));
-            #ifdef MAP
-            cout<<data.ipEmettor<<endl;  
-            #endif
             contenu=contenu.substr(contenu.find_first_of('[',0)+1,contenu.length());
+            
             //day
             data.day=contenu.substr(0,contenu.find_first_of(':',0));
-            #ifdef MAP
-            cout<<data.day<<endl;
-            #endif
             contenu=contenu.substr(contenu.find_first_of(':',0)+1,contenu.length());
+
             //hour
             data.hour=contenu.substr(0,contenu.find_first_of(':',0));
-            #ifdef MAP
-            cout<<data.hour<<endl;
-            #endif
             contenu=contenu.substr(contenu.find_first_of(' ',1)+1,contenu.length());
+
             //gmt
             data.gmt=contenu.substr(0,contenu.find_first_of(']',0));
-            #ifdef MAP
-            cout<<data.gmt<<endl;
-            #endif
             contenu=contenu.substr(contenu.find_first_of('"',0)+1,contenu.length());
+            
             //action
             data.action=contenu.substr(0,contenu.find_first_of('/',0));
-            #ifdef MAP
-            cout<<data.action<<endl;
-            #endif
-            contenu=contenu.substr(contenu.find_first_of('/',2),contenu.length());
+			contenu=contenu.substr(contenu.find_first_of('/',2),contenu.length());
+            
             //urlHit
-            data.urlHit=contenu.substr(0,contenu.find_first_of(' ',0));
-        	
-            #ifdef MAP
-            cout<<data.urlHit<<endl;
-            #endif
-
-            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
+            data.urlHit = clearURL(contenu.substr(0,contenu.find_first_of(' ',0)));
+			contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
 
             //protocol used
             data.protocol=contenu.substr(0,contenu.find_first_of('"',0));
-            #ifdef MAP
-            cout<<data.protocol<<endl;
-            #endif
-            contenu=contenu.substr(contenu.find_first_of('"',0)+2,contenu.length());
+			contenu=contenu.substr(contenu.find_first_of('"',0)+2,contenu.length());
 
             //returnCode
             data.returnCode=contenu.substr(0,contenu.find_first_of(' ',1));
-            #ifdef MAP
-            cout<<data.returnCode<<endl;
-            #endif
-
-            contenu=contenu.substr(contenu.find_first_of(' ',2)+1,contenu.length());
+			contenu=contenu.substr(contenu.find_first_of(' ',2)+1,contenu.length());
+            
             //Octet Quantity
             data.octetQuantity=contenu.substr(0,contenu.find_first_of(' ',1));
-            #ifdef MAP
-            cout<<data.octetQuantity<<endl;
-            #endif
-
-            contenu=contenu.substr(contenu.find_first_of('"',1)+1,contenu.length());
+			contenu=contenu.substr(contenu.find_first_of('"',1)+1,contenu.length());
+            
             //referer
-			data.referer=contenu.substr(0,contenu.find_first_of('"',0));
-
-
-            #ifdef MAP
-            cout<<data.referer<<endl;
-            #endif
-
-            contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
+			data.referer = clearURL(contenu.substr(0,contenu.find_first_of('"',0)));
+			contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
+            
             //browser
             data.browser=contenu.substr(0,contenu.length()-1);
+
+
             #ifdef MAP
+
+            cout<<data.ipEmettor<<endl;
+            cout<<data.day<<endl;
+            cout<<data.hour<<endl;
+            cout<<data.gmt<<endl;
+            cout<<data.action<<endl;
+            cout<<data.urlHit<<endl;
+            cout<<data.protocol<<endl;
+            cout<<data.returnCode<<endl;
+            cout<<data.octetQuantity<<endl;
+            cout<<data.referer<<endl;
             cout<<data.browser<<endl<<endl; 
+          
             #endif
 
             //on cherche si lextension est conforme
@@ -280,28 +349,29 @@ int URLData::read(bool affImage, int hour)
                 }
              }
 
-          
-            // ----------appel avec les options pour ranger les logs dans notre structure--------
-            if((affImage==true) ||(exclusion==false))  //on  test si  l'extension est autorise 
-            {
-
-                    if (hour==-1){
-
-						AddLine(data.urlHit,data.referer);
-                        #ifdef MAP
-                        cout<<"----------------ajout toutes les heures-------------"<<endl;
-                        #endif
-                    }
-                    else {
-                        if(std::stoi(data.hour)==hour){
-                            //------------on ajoute les logs correspondant a la bonne heure
-							AddLine(data.urlHit,data.referer);
-                            #ifdef MAP
-                            cout<<"----------------ajout de la bonne heure-------------"<<endl;
-                            #endif
-                        }
-                    }
-            }      
+            if (data.returnCode=="200")
+            
+            {// ----------appel avec les options pour ranger les logs dans notre structure--------
+                        if((affImage==true) ||(exclusion==false))  //on  test si  l'extension est autorise 
+                        {
+            
+                                if (hour==-1){
+            
+                                    AddLine(data.urlHit,data.referer);
+                                    #ifdef MAP
+                                    cout<<"----------------ajout toutes les heures-------------"<<endl;
+                                    #endif
+                                }
+                                else {
+                                    if(std::stoi(data.hour)==hour){
+                                        //------------on ajoute les logs correspondant a la bonne heure
+                                        AddLine(data.urlHit,data.referer);
+                                        #ifdef MAP
+                                        cout<<"----------------ajout de la bonne heure-------------"<<endl;
+                                        #endif
+                                    }
+                                }
+                        }      }
             //on ferme le fichierx
         }
         fichier.close();
@@ -311,3 +381,9 @@ int URLData::read(bool affImage, int hour)
 
 
 } //----- Fin de Méthode
+
+
+bool operator< (URLHits const h1, URLHits const h2) 
+{ 
+    return h1.hits <= h2.hits; 
+}

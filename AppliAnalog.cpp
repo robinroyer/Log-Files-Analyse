@@ -133,15 +133,24 @@ int AppliAnalog::Execute()
 
     data->read(false,-1);
 
-    data->Displays();
+    //data->Displays();
     data->TopTen();
 
     Graph* graph = new Graph("coucou.dot");
 
     graph->GenerateDot(data);
 
+    (data->test).sort();
+
+    auto itend = (data->test).begin();
+    for (itend; itend!=data->test.end(); itend++)
+    {
+        itend++;
+        std::cout << *itend << " : " << std::endl;
+    }
+
     delete data;
-    delete graph;
+    //delete graph;
 
     return 0;
 
