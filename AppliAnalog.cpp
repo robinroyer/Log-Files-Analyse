@@ -31,8 +31,7 @@ AppliAnalog::~AppliAnalog()
 
 bool AppliAnalog::is_number(const std::string& s)
 {
-    return !s.empty() && std::find_if(s.begin(), 
-        s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
+    return !s.empty() && std::find_if(s.begin(), s.end(), [](char c) { return !std::isdigit(c); }) == s.end();
 }
 
 bool AppliAnalog::hasOption(char params)
@@ -78,7 +77,7 @@ bool AppliAnalog::hasCorrectValueOption(char params)
 		case 'g': //check if the name of the dotfile is correct
 			for(it = this->options.begin(), end = this->options.end(); it != end; it++)
     		{
-        		if(it->at(1)==params and ((++it))->find(".dot")!=-1) //pas beau, a modifier en it.next 
+        		if(it->at(1)==params and ((++it))->find(".dot")!=-1)
         		{
         			return true;
         		}
