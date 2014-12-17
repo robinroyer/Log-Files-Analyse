@@ -171,19 +171,20 @@ int AppliAnalog::Execute()
             return 3;
         }
     }
-
+    
     //All the options are correct, starts the application!
     URLData* data = new URLData();
 
     //Read the logfile and put information from it in data
     if(hasOption('t'))
     {
-        data->read(!hasOption('x'), ValueOption('t'), ValueOption('0'), hasOption('c'));
+        data->read(!hasOption('x'), ValueOption('t'), ValueOption('0'));
     }
     else
     {
-        data->read(!hasOption('x'), "-1", ValueOption('0'), hasOption('c'));
+        data->read(!hasOption('x'), "-1", ValueOption('0'));
     }
+    
     //displays the top ten websites
     data->TopTen();
 
@@ -197,7 +198,7 @@ int AppliAnalog::Execute()
     }
 
     delete data;
-
+    
     return 0;
 
 }
