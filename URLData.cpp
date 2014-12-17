@@ -9,6 +9,7 @@
 #include "URLData.h"
 #include "URLStats.h"
 
+#define TOP_DISP 10
 	
 URLData::URLData()
 {
@@ -52,7 +53,7 @@ int URLData::TopTen()
 	
     //displays the last 10 elements of this list
     auto itend = listTopTen.end();
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < TOP_DISP; i++)
     {
         itend--;
         //displays each ten first website with this syntax : "Website : X" (X, number of hits)
@@ -101,70 +102,67 @@ std::string URLData::getLinks()
 
 }
 
-std::string URLData::clearURL(bool clean, std::string str)
+std::string URLData::clearURL(std::string str)
 {
-    
-    if(clean)
-    {
-        //clean php URLs
-    	if (str.find("?")!=std::string::npos)
-    	{
-    		std::size_t found = str.find("?");
-        	if (found!=std::string::npos)
-            	str = str.substr(0, found);
-    	}
-        //clean js URLs
-    	if (str.rfind(";")!=std::string::npos)
-    	{
-    		std::size_t found = str.rfind(";");
-        	if (found!=std::string::npos)
-            	str = str.substr(0, found);
-    	}
-        //delete the last /
-    	if (str.back() == '/')
-    	{
-    		str.erase (str.end()-1, str.end());
-    	}
-        //delete the root URL for insa-lyon.fr URLs
-        if (str.find("insa-lyon.fr")!=std::string::npos)
-        {
-            if (str.find(".fr:90")!=std::string::npos)
-            {
-                std::size_t found = str.find("90");
-                if (found!=std::string::npos)
-                    str = str.substr(found+2, str.size());
-            }
-            else if (str.find(".fr")!=std::string::npos)
-            {
-                std::size_t found = str.find(".fr");
-                if (found!=std::string::npos)
-                    str = str.substr(found+3, str.size());
-            }
-            
-        }
-        //delete the root URL for intranet-if URLs
-        if (str.find("intranet-if")!=std::string::npos)
-        {
-            if (str.find("90")!=std::string::npos)
-            {
-                std::size_t found = str.find("90");
-                if (found!=std::string::npos)
-                    str = str.substr(found+2, str.size());
-            }
-            
-        }
 
-        //Clean and order URLs from google        
-        if (str.find("google")!=std::string::npos)
+    //clean php URLs
+	if (str.find("?")!=std::string::npos)
+	{
+		std::size_t found = str.find("?");
+    	if (found!=std::string::npos)
+        	str = str.substr(0, found);
+	}
+    //clean js URLs
+	if (str.rfind(";")!=std::string::npos)
+	{
+		std::size_t found = str.rfind(";");
+    	if (found!=std::string::npos)
+        	str = str.substr(0, found);
+	}
+    //delete the last /
+	if (str.back() == '/')
+	{
+		str.erase (str.end()-1, str.end());
+	}
+    //delete the root URL for insa-lyon.fr URLs
+    if (str.find("insa-lyon.fr")!=std::string::npos)
+    {
+        if (str.find(".fr:90")!=std::string::npos)
         {
-            str = "Google";            
+            std::size_t found = str.find("90");
+            if (found!=std::string::npos)
+                str = str.substr(found+2, str.size());
+        }
+        else if (str.find(".fr")!=std::string::npos)
+        {
+            std::size_t found = str.find(".fr");
+            if (found!=std::string::npos)
+                str = str.substr(found+3, str.size());
         }
         
-        //Clean and order URLs from facebook        
-        if (str.find("facebook")!=std::string::npos)
+    }
+    //delete the root URL for intranet-if URLs
+    if (str.find("intranet-if")!=std::string::npos)
+    {
+        if (str.find("90")!=std::string::npos)
         {
-            str = "Facebook";            
+            std::size_t found = str.find("90");
+            if (found!=std::string::npos)
+                str = str.substr(found+2, str.size());
         }
+        
+    }
+
+    //Clean and order URLs from google        
+    if (str.find("google")!=std::string::npos)
+    {
+        str = "Google";            
+    }
+    
+    //Clean and order URLs from facebook        
+    if (str.find("facebook")!=std::string::npos)
+    {
+        str = "Facebook";            
     }
 
 	return str;
@@ -244,10 +242,6 @@ int URLData::read(bool affImage, std::string hour, std::string logname, bool cle
             data.action=contenu.substr(0,contenu.find_first_of('/',0));
             contenu=contenu.substr(contenu.find_first_of('/',2),contenu.length());
 
-            //urlHit
-            data.urlHit = clearURL(clean,contenu.substr(0,contenu.find_first_of(' ',0)));
-            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
-
             //protocol used
             data.protocol=contenu.substr(0,contenu.find_first_of('"',0));
             contenu=contenu.substr(contenu.find_first_of('"',0)+2,contenu.length());
@@ -260,9 +254,28 @@ int URLData::read(bool affImage, std::string hour, std::string logname, bool cle
             data.octetQuantity=contenu.substr(0,contenu.find_first_of(' ',1));
             contenu=contenu.substr(contenu.find_first_of('"',1)+1,contenu.length());
 
+            if(clean)
+            {
+            //urlHit
+            data.urlHit = clearURL(contenu.substr(0,contenu.find_first_of(' ',0)));
+            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
+
             //referer
-            data.referer = clearURL(clean, contenu.substr(0,contenu.find_first_of('"',0)));
+            data.referer = clearURL(contenu.substr(0,contenu.find_first_of('"',0)));
             contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
+            }
+            else
+            {
+            //urlHit
+            data.urlHit = contenu.substr(0,contenu.find_first_of(' ',0));
+            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
+
+            //referer
+            data.referer = contenu.substr(0,contenu.find_first_of('"',0));
+            contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
+
+            }
+            
 
             //browser
             data.browser=contenu.substr(0,contenu.length()-1);

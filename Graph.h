@@ -5,14 +5,18 @@
 
 class Graph
 
+/**
+ * Graph class that generates the dot file
+ */
+
+
 
 {
 	public:
 		Graph(std::string name);
 		/**
-		 * Creates file
-		 * @params isOptionG true if the user uses -g option
-		 * Creates a dataMapG if isOptionG is true, else creates a dataMapR
+		 * Creates a Graph object
+		 * @params name : name of the file to generate
 		 */
 
 		 ~Graph();
@@ -21,6 +25,12 @@ class Graph
 		 */
 
 		int GenerateDot(URLData*);
+		/**
+		 * Generates the dot file with the links
+		 * @params name : name of the file to generate
+		 * @return it returns the error code
+		 */
+
 
 	private:
 

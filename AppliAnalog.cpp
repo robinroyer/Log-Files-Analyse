@@ -178,11 +178,11 @@ int AppliAnalog::Execute()
     //Read the logfile and put information from it in data
     if(hasOption('t'))
     {
-        data->read(!hasOption('x'), ValueOption('t'), ValueOption('0'));
+        data->read(!hasOption('x'), ValueOption('t'), ValueOption('0'), hasOption('c'));
     }
     else
     {
-        data->read(!hasOption('x'), "-1", ValueOption('0'));
+        data->read(!hasOption('x'), "-1", ValueOption('0'), hasOption('c'));
     }
     //displays the top ten websites
     data->TopTen();
