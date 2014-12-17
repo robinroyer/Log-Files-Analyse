@@ -1,0 +1,1 @@
+../../src/analog -c -x -x -t 11 log300lignes.log

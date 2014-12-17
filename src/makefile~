@@ -1,0 +1,24 @@
+CXX=g++ -std=c++11
+
+analog: AppliAnalog.o URLData.o URLStats.o Graph.o URLHits.o
+	$(CXX) -o  analog AppliAnalog.o URLData.o URLStats.o Graph.o URLHits.o
+
+AppliAnalog.o: AppliAnalog.cpp AppliAnalog.h URLData.h Graph.h
+	$(CXX) -c AppliAnalog.cpp
+
+URLData.o: URLData.cpp URLData.h URLStats.h URLHits.h
+	$(CXX) -c URLData.cpp
+
+URLStats.o: URLStats.cpp URLStats.h
+	$(CXX) -c URLStats.cpp
+
+Graph.o: Graph.cpp Graph.h URLData.h
+	$(CXX) -c Graph.cpp
+
+URLHits.o: URLHits.cpp URLHits.h
+	$(CXX) -c URLHits.cpp
+
+
+#in order to clean old .o
+clean:
+	rm -rf *.o
