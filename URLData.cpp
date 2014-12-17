@@ -242,6 +242,20 @@ int URLData::read(bool affImage, std::string hour, std::string logname, bool cle
             data.action=contenu.substr(0,contenu.find_first_of('/',0));
             contenu=contenu.substr(contenu.find_first_of('/',2),contenu.length());
 
+            if(clean)
+            {
+            //urlHit
+            data.urlHit = clearURL(contenu.substr(0,contenu.find_first_of(' ',0)));
+            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
+            }
+            else
+            {
+            //urlHit
+            data.urlHit = contenu.substr(0,contenu.find_first_of(' ',0));
+            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
+
+            }
+
             //protocol used
             data.protocol=contenu.substr(0,contenu.find_first_of('"',0));
             contenu=contenu.substr(contenu.find_first_of('"',0)+2,contenu.length());
@@ -256,20 +270,12 @@ int URLData::read(bool affImage, std::string hour, std::string logname, bool cle
 
             if(clean)
             {
-            //urlHit
-            data.urlHit = clearURL(contenu.substr(0,contenu.find_first_of(' ',0)));
-            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
-
             //referer
             data.referer = clearURL(contenu.substr(0,contenu.find_first_of('"',0)));
             contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
             }
             else
             {
-            //urlHit
-            data.urlHit = contenu.substr(0,contenu.find_first_of(' ',0));
-            contenu=contenu.substr(contenu.find_first_of(' ',0)+1,contenu.length());
-
             //referer
             data.referer = contenu.substr(0,contenu.find_first_of('"',0));
             contenu=contenu.substr(contenu.find_first_of('"',1)+3,contenu.length());
