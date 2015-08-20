@@ -1,8 +1,8 @@
 #ANALOG
 
-Analog is written in c++ and is able to format and analyze
-a big amount of Apache logs,depending on the options called with,
-it will display the analyse as plain text or as a DotFile.
+Analog is a c++ program able to format and analyze a big amount of Apache logs.
+Depending on the options called with, it will display the analyse
+as plain text or as a DotFile.
 
 ============================================================================
 ###Description
