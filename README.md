@@ -23,7 +23,7 @@ format and display the 10 most hit pages.
 	-c			Clean the URL from "jsession","php?..."
 ```
 =============================================================================
-###error code
+###Error code
 	0 		Every thing has gone right
 	1		ERROR1: The logfile is incorrect
 	2		ERROR2: The time is incorrect
