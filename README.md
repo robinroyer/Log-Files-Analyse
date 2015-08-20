@@ -1,6 +1,4 @@
 #ANALOG
-============================================================================
-
 Analog format analyze and display most accessed pages from Apache logs
 
 ============================================================================
@@ -10,7 +8,7 @@ Analog format analyze and display most accessed pages from Apache logs
 format and display the 10 pages the most hit.
 
 ============================================================================
-###Option
+###Options
 ```
 	-x 		 	Exclude file extension that is in "extension.ini"
 				(that can be filled up by user)
