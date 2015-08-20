@@ -1,4 +1,4 @@
-			- #ANALOG -
+#ANALOG
 ============================================================================
 
 Analog format analyze and display most accessed pages from Apache logs
