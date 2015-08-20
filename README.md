@@ -3,14 +3,10 @@
 Analog is written in c++ and is able to format and analyze
 a big amount of Apache logs,depending on the options called with,
 it will display the analyse as plain text or as a DotFile
-
-
 ============================================================================
 ###Description
-
-	Analog must be called with a log file as last argument to 
+Analog must be called with a log file as last argument to 
 format and display the 10 most hit pages.
-
 ============================================================================
 ###Options
 ```
@@ -31,7 +27,7 @@ format and display the 10 most hit pages.
 	2		ERROR2: The time is incorrect
 	3		ERROR3: The dotfile is incorrect
 ==============================================================================
-###Authors:		- Binomes B 3214 -
+###Authors:		- Binomes B 3214 - 
 
 	Yassir Bouiry: yassir.bouiry@insa-lyon.fr
 	Cyril Canete:  cyril.canete@insa-lyon.fr
