@@ -2,11 +2,13 @@
 
 Analog is written in c++ and is able to format and analyze
 a big amount of Apache logs,depending on the options called with,
-it will display the analyse as plain text or as a DotFile
+it will display the analyse as plain text or as a DotFile.
+
 ============================================================================
 ###Description
 Analog must be called with a log file as last argument to 
 format and display the 10 most hit pages.
+
 ============================================================================
 ###Options
 ```
